@@ -174,7 +174,7 @@ void leerDatZona()
     {
         printf("Archivo abierto correctamente\n");
         while (fread(&zona, sizeof(struct Zonas), 1, file))
-        {   
+        {
             zona.nZonas = i + 1;
 
             if (zona.TotalMediciones != 0)
@@ -748,6 +748,77 @@ void deleateZona()
     }
 }
 
+void predectZona() {   
+    FILE *file;
+    file = fopen("zonas.dat", "rb+");
+    if (file == NULL) {
+        printf("No se pudo abrir el archivo.\n");
+        return;
+    }
+
+    double temp;
+    double hum;
+    double veloc;
+    struct Zonas zona;
+    char nombre[50];
+    int posicion = 0;
+
+    printf("Ingrese el nombre de la zona que desea predecir: ");
+    leercadena(nombre, 50);
+    printf("Ingrese la temperatura(°C): ");
+    scanf("%lf", &temp);
+    printf("Ingrese el procentaje de humedad: ");
+    scanf("%lf", &hum);
+    printf("Ingrese la velocidad del viento (m/s): ");
+    scanf("%lf", &veloc);
+
+    posicion = findByZoneName(nombre);
+
+    if (posicion != -1) {
+        fseek(file, posicion, SEEK_SET);
+        if (fread(&zona, sizeof(struct Zonas), 1, file) == 1) {
+            predectContaminante(zona.cpPM25, temp, hum, veloc);
+        } else {
+            printf("Error al leer los datos de la zona.\n");
+        }
+    } else {
+        printf("No se pudo encontrar la zona especificada.\n");
+    }
+
+    fclose(file);
+}
+
+double predectContaminante(double cp, double temp, double hum, double veloc)
+{
+    double predicion = 0;
+    double sumaPesos = 0;
+
+    // Pesos para las horas de mayor concentración
+    double pesos[24] = {1, 0.01, 0.01, 0.01, 0.01, 0.03, 0.04, 0.10, 
+    0.10, 0.15, 0.15, 0.15, 2, 0.01, 3, 0.01, 0.15, 0.01, 0.10, 0.01, 0.01, 0.01, 0.01, 0.01};
+
+    // Calcular predicciones ponderadas
+    for (int i = 0; i < 24; i++)
+    {
+        predicion += cp * pesos[i];
+        sumaPesos += pesos[i];
+        printf("Prediccion %d: %lf\n", i + 1, predicion);
+    }
+        printf("Prediccion final: %lf\n", predicion);
+
+        printf("Suma Peso: %lf\n", sumaPesos);
+
+    // Calcular el promedio ponderado
+    if (sumaPesos != 0)
+    {
+        predicion /= sumaPesos;
+    }
+
+
+    printf("Predicción de contaminante sin factores climáticos: %lf\n", predicion);
+    return predicion;
+}
+
 void menu()
 {
     int opcion;
@@ -757,8 +828,9 @@ void menu()
         printf("1. Ingresar datos de la zona\n");
         printf("2. Mostrar datos de la zona\n");
         printf("3. Actualizar datos de la zona\n");
-        printf("4. Eliminar zona\n");
-        printf("5. Salir\n");
+        printf("4. Predecir contaminante\n");
+        printf("5. Eliminar zona\n");
+        printf("6. Salir\n");
         scanf("%d", &opcion);
         switch (opcion)
         {
@@ -772,14 +844,17 @@ void menu()
             actualizarZona();
             break;
         case 4:
-            deleateZona();
+            predectZona();
             break;
         case 5:
+            deleateZona();
+            break;
+        case 6:
             printf("Saliendo...\n");
             break;
         default:
             printf("Opcion no valida\n");
             break;
         }
-    } while (opcion != 5);
+    } while (opcion != 6);
 }

@@ -10,15 +10,6 @@ struct Contaminantes
     double promedio;
 };
 
-struct DatosHistoricos
-{
-    char fecha[50];
-    double PM25;
-    double NO2;
-    double SO2;
-    double CO;
-};
-
 struct Zonas
 {
     char nomZona[50];
@@ -45,3 +36,5 @@ int findByZoneName(char *name);
 void updateZone(struct Zonas *zona, int posicion);
 void actualizarZona();
 void deleateZona();
+double predectContaminante(double contaminante, double temperatura, double humedad, double velocidad);
+void predectZona();

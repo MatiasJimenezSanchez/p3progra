@@ -12,9 +12,8 @@ struct Contaminantes
 
 struct Zonas
 {
-    char nomZona[50];
     int TotalMediciones;
-    int nZonas;
+    int Dias;
     double cpPM25;
     double cpNO2;
     double cpSO2;
@@ -24,6 +23,7 @@ struct Zonas
 
 void menu();
 void leercadena(char *cadena, int longitud);
+void crearArchi();
 void creatDatZona();
 void leerDatZona();
 void mostrarContaminante(double contaminante);
@@ -32,9 +32,10 @@ double CpPM25(double numMediciones, double sumaConcentraciones, struct Zonas *zo
 double CpNO2(double numMediciones, double sumaConcentraciones, struct Zonas *zona);
 double CpSO2(double numMediciones, double sumaConcentraciones, struct Zonas *zona);
 double CpCO(double numMediciones, double sumaConcentraciones, struct Zonas *zona);
-int findByZoneName(char *name);
-void updateZone(struct Zonas *zona, int posicion);
+int findByZoneDia();
+//void updateZone(struct Zonas *zona, int posicion);
+/*
 void actualizarZona();
 void deleateZona();
-double predectContaminante(double contaminante, double temperatura, double humedad, double velocidad);
-void predectZona();
+*/
+void saveDatZona(struct Zonas *zona, const char *filename);

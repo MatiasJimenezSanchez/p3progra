@@ -22,37 +22,6 @@ void crearArchi()
     }
 }
 
-double calcularSumaPonderada(double datos, int dias) {
-    double suma = 0;
-    double pesoTotal = 0;
-    for (int i = 0; i < dias; i++) {
-        double peso = 1.0 / (i + 1); // Peso inversamente proporcional al día
-        suma += datos[i] * peso;
-        pesoTotal += peso;
-    }
-    return suma / pesoTotal;
-}
-
-void crearDatosHistoricos(double pm25, int indice){
-    struct Zonas zona;
-    
-    zona.cpPM25 = pm25;
-    zona.Dias = indice;
-    FILE *file = fopen("historicos.dat", "ab+");
-    if (file == NULL)
-    {
-        printf("No se pudo abrir el archivo.\n");
-    }
-    else
-    {
-        printf("Archivo creado correctamente.\n");
-        fclose(file);
-    }
-
-    fwrite(&zona, sizeof(struct Zonas), 1, file);
-
-}
-
 void saveDatZona(struct Zonas *zona, const char *filename)
 {
     FILE *file = fopen(filename, "ab+");
@@ -69,8 +38,6 @@ void saveDatZona(struct Zonas *zona, const char *filename)
     }
     fclose(file);
 }
-
-
 
 void leercadena(char *cadena, int longitud)
 {
@@ -99,15 +66,6 @@ void creatDatZona()
         printf("El archivo %s existe.\n", nombre);
         fclose(file);
     }
-
-    if (fread(&zona, sizeof(struct Zonas), 1, file))
-    {
-        printf("El archivo %s ya tiene datos.\n", nombre);
-        fclose(file);
-        return;
-    }
-
-    fclose(file);
 
     printf("\t\tPM2.5\t\t\n");
     printf("\n");
@@ -241,7 +199,17 @@ void leerDatZona()
     printf("Ingrese el nombre de la zona: ");
     leercadena(nombre, 50);
     strcat(nombre, ".dat");
-    file = fopen(nombre, "rb");
+    file = fopen(nombre, "r+"); 
+    if (file == NULL)
+    {
+        printf("El archivo %s no existe.\n", nombre);
+        return;
+    }else{
+        printf("El archivo %s existe.\n", nombre);
+        fclose(file);
+    }
+
+    file = fopen(nombre, "rb+");
 
     if (file == NULL)
     {
@@ -278,10 +246,7 @@ void leerDatZona()
                 i++;
             }
         }
-    }
-    for (int i = 0; i < 30; i++)
-    {
-        printf("Concentracion de PM2.5 en el dia %d: %lf\n", i + 1, zona.PM25[i]);
+        fwrite(&zona, sizeof(struct Zonas), 1, file);
     }
     fclose(file);
     printf("Archivo cerrado correctamente\n");
@@ -634,7 +599,7 @@ int findByZoneDia()
     {
         printf("Ingrese el numero de dia que desea buscar: ");
         scanf("%d", &dia);
-
+        printf("Dia de la zona: %d\n",zona.Dias);
         printf("Archivo abierto correctamente\n");
         while (fread(&zona, sizeof(struct Zonas), 1, file))
         {
@@ -662,6 +627,7 @@ int findByZoneDia()
     return posicion;
 }
 
+void predecir
 /*void updateZone(struct Zonas *zona, int posicion)
 {
     FILE *file;
@@ -846,7 +812,8 @@ void menu()
         printf("2. Ingresar datos de la zona\n");
         printf("3. Leer datos de la zona\n");
         printf("4. Encontrar zona por dia\n");
-        printf("5. Salir\n");
+        printf("5. Leer Datos historicos\n");
+        printf("6. Salir\n");
         scanf("%d", &opcion);
         switch (opcion)
         {
@@ -863,7 +830,10 @@ void menu()
             findByZoneDia();
             break;
         case 5:
-            printf("Saliendo...\n");
+
+            break;
+        case 6:
+            printf("Saliendo del programa\n");
             break;
         default:
             printf("Opcion no valida\n");

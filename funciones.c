@@ -3,38 +3,67 @@
 #include <string.h>
 #include "funciones.h"
 
-void crearArchi()
-{
-    struct Zonas zona;
-    char nombre[50];
-    printf("Ingrese el nombre del archivo: ");
-    leercadena(nombre, 50);
-    strcat(nombre, ".dat");
-    FILE *file = fopen(nombre, "ab+");
-    if (file == NULL)
-    {
-        printf("No se pudo abrir el archivo.\n");
-    }
-    else
-    {
-        printf("Archivo creado correctamente.\n");
-        fclose(file);
+// Función para generar recomendaciones
+void generarRecomendaciones(struct Prediccion *prediccion) {
+    if (prediccion->PM25 > 50 || prediccion->NO2 > 100 || prediccion->SO2 > 75 || prediccion->CO > 9) {
+        printf("Recomendaciones de mitigación:\n");
+        if (prediccion->PM25 > 50) {
+            printf("- Reducir el tráfico vehicular\n");
+        }
+        if (prediccion->NO2 > 100) {
+            printf("- Cierre temporal de industrias\n");
+        }
+        if (prediccion->SO2 > 75) {
+            printf("- Suspensión de actividades al aire libre\n");
+        }
+        if (prediccion->CO > 9) {
+            printf("- Monitoreo constante de niveles de CO\n");
+        }
+    } else {
+        printf("Los niveles de contaminación están dentro de los límites aceptables.\n");
     }
 }
 
-void saveDatZona(struct Zonas *zona, const char *filename)
-{
-    FILE *file = fopen(filename, "ab+");
-
-    if (file == NULL)
-    {
-        printf("Error al abrir el archivo %s\n", filename);
-        return;
+// Función para predecir niveles futuros basados en datos históricos
+struct Prediccion predecirNivelesFuturos(struct DatosHistoricos *historicos) {
+    struct Prediccion prediccion;
+    prediccion.PM25 = calcularSumaPonderada(historicos->PM25, 5);
+    prediccion.NO2 = calcularSumaPonderada(historicos->NO2, 5);
+    prediccion.SO2 = calcularSumaPonderada(historicos->SO2, 5);
+    prediccion.CO = calcularSumaPonderada(historicos->CO, 5);
+    return prediccion;
+}
+// Función para calcular la suma ponderada
+double calcularSumaPonderada(double *datos, int dias) {
+    double suma = 0;
+    double pesoTotal = 0;
+    for (int i = 0; i < dias; i++) {
+        double peso = 1.0 / (i + 1); // Peso inversamente proporcional al día
+        suma += datos[i] * peso;
+        pesoTotal += peso;
     }
-    else
-    {
+    return suma / pesoTotal;
+}
+// Función para generar datos históricos
+void generarDatosHistoricos(struct DatosHistoricos *historicos) {
+    for (int i = 0; i < 5; i++) {
+        historicos->PM25[i] = (rand() % 100) / 10.0;
+        historicos->NO2[i] = (rand() % 100) / 10.0;
+        historicos->SO2[i] = (rand() % 100) / 10.0;
+        historicos->CO[i] = (rand() % 100) / 10.0;
+    }
+}
+
+
+// Función para guardar datos de una zona
+void saveDatZona(struct Zonas *zona) {
+    FILE *file = fopen("zonas.dat", "ab+");
+    if (file == NULL) {
+        printf("Error al abrir el archivo\n");
+        return;
+    } else {
         fwrite(zona, sizeof(struct Zonas), 1, file);
-        printf("Archivo %s abierto correctamente\n", filename);
+        printf("Archivo abierto correctamente\n");
     }
     fclose(file);
 }
@@ -49,28 +78,11 @@ void leercadena(char *cadena, int longitud)
 
 void creatDatZona()
 {
-    char nombre[50];
-    struct Zonas zona;
     int numMedPM2 = 0, numMedNO2 = 0, numMedSO2 = 0, numMedCO = 0;
     double sumaPM25 = 0, sumaNO2 = 0, sumaSO2 = 0, sumaCO = 0;
-    printf("Ingrese el nombre de la zona: \n");
-    leercadena(nombre, 50);
-    strcat(nombre, ".dat");
-
-    FILE *file = fopen(nombre, "r+");
-    if (file == NULL)
-    {
-        printf("El archivo %s no existe.\n", nombre);
-        return;
-    }else{
-        printf("El archivo %s existe.\n", nombre);
-        fclose(file);
-    }
-    
-    zona.Dias += 1;
-
-
-    fclose(file);
+    struct Zonas zona;
+    printf("Ingrese el nombre de la zona: ");
+    leercadena(zona.nomZona, 50);
 
     printf("\t\tPM2.5\t\t\n");
     printf("\n");
@@ -190,18 +202,15 @@ void creatDatZona()
     }
     zona.cpCO = CpCO(numMedCO, sumaCO, &zona);
     zona.TotalMediciones += numMedCO;
-    saveDatZona(&zona, nombre);
+    saveDatZona(&zona);
 }
 
 void leerDatZona()
 {
     FILE *file;
     struct Zonas zona;
-    char nombre[50];
-    printf("Ingrese el nombre de la zona: ");
-    leercadena(nombre, 50);
-    strcat(nombre, ".dat");
-    file = fopen(nombre, "rb");
+    file = fopen("zonas.dat", "rb");
+    int i = 0;
 
     if (file == NULL)
     {
@@ -213,11 +222,13 @@ void leerDatZona()
         printf("Archivo abierto correctamente\n");
         while (fread(&zona, sizeof(struct Zonas), 1, file))
         {   
+            zona.nZonas = i + 1;
+
             if (zona.TotalMediciones != 0)
             {
                 printf("\n");
-                printf("*---------------Dias %d---------------*\n", zona.Dias);
-                printf("Nombre de la zona: %s\n", nombre);
+                printf("*---------------Zona %d---------------*\n", zona.nZonas);
+                printf("Nombre de la zona: %s\n", zona.nomZona);
                 printf("Total de mediciones: %d\n", zona.TotalMediciones);
                 printf("\n");
                 printf("--------------------------------\n");
@@ -233,6 +244,7 @@ void leerDatZona()
                 printf("Concentraciones promedio de CO: %lf\n", zona.cpCO);
                 mostrarContaminante(zona.cpCO);
                 printf("--------------------------------\n");
+                i++;
             }
         }
     }
@@ -568,17 +580,13 @@ double CpCO(double numMediciones, double suma, struct Zonas *zona)
     return cpCO;
 }
 
-int findByZoneDia()
+int findByZoneName(char *name)
 {
-    char nombre[50];
     int posicion = 0, f = 0;
-    int dia;
     FILE *file;
     struct Zonas zona;
-    printf("Ingrese el nombre de la zona que desea buscar: ");
-    leercadena(nombre, 50);
-    strcat(nombre, ".dat");
-    file = fopen(nombre, "rb");
+    file = fopen("zonas.dat", "rb");
+
     if (file == NULL)
     {
         printf("Error al abrir el archivo\n");
@@ -586,16 +594,13 @@ int findByZoneDia()
     }
     else
     {
-        printf("Ingrese el numero de dia que desea buscar: ");
-        scanf("%d", &dia);
-
         printf("Archivo abierto correctamente\n");
         while (fread(&zona, sizeof(struct Zonas), 1, file))
         {
-            if (zona.Dias == dia)
+            if (strcmp(zona.nomZona, name) == 0)
             {
                 f = 1;
-                printf("Dia %d\n", zona.Dias);
+                printf("Nombre de la zona: %s\n", zona.nomZona);
                 printf("Total de mediciones: %d\n", zona.TotalMediciones);
                 printf("PM2.5: %lf\n", zona.cpPM25);
                 printf("NO2: %lf\n", zona.cpNO2);
@@ -616,7 +621,7 @@ int findByZoneDia()
     return posicion;
 }
 
-/*void updateZone(struct Zonas *zona, int posicion)
+void updateZone(struct Zonas *zona, int posicion)
 {
     FILE *file;
     file = fopen("zonas.dat", "rb+");
@@ -633,7 +638,7 @@ int findByZoneDia()
     }
     fclose(file);
 }
-/*
+
 void actualizarZona()
 {
     int numMedPM2 = 0, numMedNO2 = 0, numMedSO2 = 0, numMedCO = 0;
@@ -789,39 +794,74 @@ void deleateZona()
         updateZone(&zona, posicion);
     }
 }
-*/
-void menu()
-{
+
+int main() {
     int opcion;
-    do
-    {
+    struct Clima clima;
+    struct Zonas zona;
+    struct Prediccion prediccion;
+    struct DatosHistoricos historicos[5]; // Datos históricos para 5 zonas
+
+    // Generar datos históricos para 5 zonas
+    for (int i = 0; i < 5; i++) {
+        generarDatosHistoricos(&historicos[i]);
+    }
+
+    do {
         printf("Seleccione una opcion: \n");
-        printf("1. Crear archivo\n");
-        printf("2. Ingresar datos de la zona\n");
-        printf("3. Leer datos de la zona\n");
-        printf("4. Encontrar zona por dia\n");
-        printf("5. Salir\n");
+        printf("1. Ingresar datos de la zona\n");
+        printf("2. Mostrar datos de la zona\n");
+        printf("3. Actualizar datos de la zona\n");
+        printf("4. Eliminar zona\n");
+        printf("5. Predecir niveles de contaminación\n");
+        printf("6. Calcular promedios históricos\n");
+        printf("7. Generar recomendaciones\n");
+        printf("8. Salir\n");
         scanf("%d", &opcion);
-        switch (opcion)
-        {
-        case 1:
-            crearArchi();
-            break;
-        case 2:
-            creatDatZona();
-            break;
-        case 3:
-            leerDatZona();
-            break;
-        case 4:
-            findByZoneDia();
-            break;
-        case 5:
-            printf("Saliendo...\n");
-            break;
-        default:
-            printf("Opcion no valida\n");
-            break;
+        switch (opcion) {
+            case 1:
+                creatDatZona();
+                break;
+            case 2:
+                leerDatZona();
+                break;
+            case 3:
+                actualizarZona();
+                break;
+            case 4:
+                deleateZona();
+                break;
+            case 5:
+                printf("Ingrese la temperatura actual: ");
+                scanf("%lf", &clima.temperatura);
+                printf("Ingrese la velocidad del viento actual: ");
+                scanf("%lf", &clima.velocidadViento);
+                printf("Ingrese el nivel de humedad actual: ");
+                scanf("%lf", &clima.humedad);
+                prediccion = predecirNivelesFuturos(&historicos[0]); // Ejemplo para la primera zona
+                printf("Predicción de niveles de contaminación:\n");
+                printf("PM2.5: %lf\n", prediccion.PM25);
+                printf("NO2: %lf\n", prediccion.NO2);
+                printf("SO2: %lf\n", prediccion.SO2);
+                printf("CO: %lf\n", prediccion.CO);
+                break;
+            case 6:
+                // Aquí deberíamos implementar la función calcularPromedioHistorico
+                // calcularPromedioHistorico(&zona, 30);
+                printf("Función calcularPromedioHistorico no implementada\n");
+                break;
+            case 7:
+                prediccion = predecirNivelesFuturos(&historicos[0]); // Ejemplo para la primera zona
+                generarRecomendaciones(&prediccion);
+                break;
+            case 8:
+                printf("Saliendo...\n");
+                break;
+            default:
+                printf("Opcion no valida\n");
+                break;
         }
-    } while (opcion != 6);
+    } while (opcion != 8);
+
+    return 0;
 }

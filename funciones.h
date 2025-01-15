@@ -1,43 +1,21 @@
-
-struct Contaminantes
+struct Dia
 {
-    double PM25;
-    double NO2;
+    int numDia;
+
+    double CO2;
     double SO2;
-    double CO;
-    double I_low, I_high, AQI_low, AQI_high;
-    double sumaConcentraciones;
-    double promedio;
-    
+    double NO2;
+    double PM25;
+
+    double temperatura;
+    double humedad;
+    double velocidad_aire;
+
+    double AQI;
 };
 
-struct Zonas
-{
-    int TotalMediciones;
-    int Dias;
-    double PM25[30];
-    double cpPM25;
-    double cpNO2;
-    double cpSO2;
-    double cpCO;
-    struct Contaminantes contaminantes[20];
-};
 
-void menu();
-void leercadena(char *cadena, int longitud);
-void crearArchi();
-void creatDatZona();
-void leerDatZona();
+void crearArchivo(char* nombre);
+void addDia(char* nombre);
+void leerDatos(char* nombre);
 void mostrarContaminante(double contaminante);
-double calcularAQI(double C, double I_low, double I_high, double AQI_low, double AQI_high);
-double CpPM25(double numMediciones, double sumaConcentraciones, struct Zonas *zona);
-double CpNO2(double numMediciones, double sumaConcentraciones, struct Zonas *zona);
-double CpSO2(double numMediciones, double sumaConcentraciones, struct Zonas *zona);
-double CpCO(double numMediciones, double sumaConcentraciones, struct Zonas *zona);
-int findByZoneDia();
-//void updateZone(struct Zonas *zona, int posicion);
-/*
-void actualizarZona();
-void deleateZona();
-*/
-void saveDatZona(struct Zonas *zona, const char *filename);

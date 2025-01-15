@@ -15,6 +15,7 @@ struct Zonas
 {
     int TotalMediciones;
     int Dias;
+    double PM25[30];
     double cpPM25;
     double cpNO2;
     double cpSO2;

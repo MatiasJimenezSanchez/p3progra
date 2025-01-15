@@ -248,6 +248,12 @@ void leerDatZona()
         }
         fwrite(&zona, sizeof(struct Zonas), 1, file);
     }
+    
+    for (int i = 0; i < 30; i++)
+    {
+        printf("La concentracion de PM2.5 es: %lf", zona.PM25[i]);
+    }
+    
     fclose(file);
     printf("Archivo cerrado correctamente\n");
 }
@@ -627,7 +633,22 @@ int findByZoneDia()
     return posicion;
 }
 
-void predecir
+double predecirContaminacion(int numDias, double concentraciones[])
+{
+    double sumaPonderada = 0;
+    double sumaPesos = 0;
+
+    for (int i = 0; i < numDias; i++)
+    {
+        double peso = (double)(numDias - i) / numDias;
+        sumaPonderada += concentraciones[i] * peso;
+        sumaPesos += peso;
+    }
+
+    double promedioPonderado = sumaPonderada / sumaPesos;
+    return promedioPonderado;
+}
+
 /*void updateZone(struct Zonas *zona, int posicion)
 {
     FILE *file;

@@ -3,7 +3,6 @@
 #include <string.h>
 #include "helpers.h"
 
-#define MAX_DIAS 100
 
 double CO2[MAX_DIAS];
 double SO2[MAX_DIAS];
@@ -81,8 +80,7 @@ void addDia(char *nombre, int *num_dias)
     fclose(archivo);
 }
 
-/*
-void leerDatosZona(char *nombre)
+void leerDatosZona(char *nombre, int *num_dias, struct Dia dias[])
 {
     FILE *archivo;
     strcat(nombre, ".txt");
@@ -93,21 +91,20 @@ void leerDatosZona(char *nombre)
         return;
     }
 
-    num_dias = 0;
-    while (fscanf(archivo, "%lf %lf %lf %lf %lf %lf %lf",
-                  &CO2[num_dias], &SO2[num_dias], &NO2[num_dias], &PM25[num_dias],
-                  &temperatura[num_dias], &humedad[num_dias], &velocidad_aire[num_dias]) != EOF)
+    fscanf(archivo, "%d", num_dias); // Leer num_dias del archivo
+
+    for (int i = 0; i < *num_dias; i++)
     {
-        num_dias++;
-        if (num_dias >= MAX_DIAS)
-        {
-            break;
-        }
+        fscanf(archivo, "%d %lf %lf %lf %lf %lf %lf %lf",
+               &dias[i].numDia, &dias[i].CO2, &dias[i].SO2, &dias[i].NO2,
+               &dias[i].PM25, &dias[i].temperatura, &dias[i].humedad, &dias[i].velocidad_aire);
+        dias[i].AQI = calcularAQI(dias[i].PM25, dias[i].NO2, dias[i].SO2, dias[i].CO2, dias[i].temperatura, dias[i].humedad, dias[i].velocidad_aire);
     }
 
     fclose(archivo);
 }
 
+/*
 void agregarFechasHistoricas(char *nombre)
 {
     FILE *archivo;

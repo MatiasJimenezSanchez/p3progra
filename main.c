@@ -3,6 +3,7 @@
 
 int main () {
     int opcion;
+    int num_dias = 0;
     do
     {
         printf("Seleccione una opcion: \n");
@@ -20,21 +21,24 @@ int main () {
         {
         case 1:
             printf("Ingrese el nombre del archivo a crear: ");
-            scanf("%s", nombreArchivo);
-            crearArchivo(nombreArchivo);
+            leercadena(nombreArchivo, 100);
+            crearArchivo(nombreArchivo, &num_dias);
             break;
         case 2:
             printf("Ingrese el nombre del archivo: ");
-            scanf("%s", nombreArchivo);
-            addDia(nombreArchivo);
+            leercadena(nombreArchivo, 100);
+            addDia(nombreArchivo, &num_dias);
             break;
         case 3:
             printf("Ingrese el nombre del archivo: ");
-            scanf("%s", nombreArchivo);
-            leerDatos(nombreArchivo);
+            leercadena(nombreArchivo, 100);
+            //leerDatosZona(nombreArchivo);
             break;
         case 4:
-            
+            printf("Ingrese el nombre del archivo: ");
+            //leercadena(nombreArchivo, 100);
+            //leerDatosZona(nombreArchivo);
+            //agregarFechasHistoricas(nombreArchivo);
             break;
         case 5:
             printf("Saliendo del programa\n");
@@ -44,6 +48,6 @@ int main () {
             printf("Opcion no valida\n");
             break;
         }
-    } while (opcion != 5);
+    } while (opcion != 6);
     return 0;
 }

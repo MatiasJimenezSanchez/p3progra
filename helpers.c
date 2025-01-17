@@ -1,38 +1,12 @@
 #include <stdio.h>
 #include "funciones.h"
-
+#include <string.h>
 // Límites máximos recomendados por la OMS (µg/m³ o mg/m³) - Directrices más estrictas
 #define PM25_LIMIT 15.0 // PM2.5 límite diario OMS (24 horas)
 #define NO2_LIMIT 25.0  // NO2 límite diario OMS (24 horas)
 #define SO2_LIMIT 40.0  // SO2 límite diario OMS (24 horas)
 #define CO_LIMIT 4.0    // CO límite diario OMS (24 horas)
 
-int encontrarUltimoDia(char *nombre)
-{
-    FILE *archivo;
-    struct Dia dia;
-    archivo = fopen(nombre, "rb");
-    if (archivo == NULL)
-    {
-        printf("Error al abrir el archivo\n");
-        return -1;
-    }
-    else
-    {
-        fseek(archivo, 0, SEEK_END);
-        long fileSize = ftell(archivo);
-        if (fileSize == 0)
-        {
-            // El archivo está vacío
-            fclose(archivo);
-            return 0;
-        }
-        fseek(archivo, -sizeof(struct Dia), SEEK_END);
-        fread(&dia, sizeof(struct Dia), 1, archivo);
-        fclose(archivo);
-        return dia.numDia;
-    }
-}
 
 void mostrarContaminante(double contaminante)
 {
@@ -70,8 +44,7 @@ void mostrarContaminante(double contaminante)
     }
 }
 
-double calcularAQI(double PM25, double NO2, double SO2, double CO,
-                   double temperatura, double humedad, double velocidad_aire)
+double calcularAQI(double PM25, double NO2, double SO2, double CO,double temperatura, double humedad, double velocidad_aire)
 {
     double coef_temp = 0.02; // Coeficiente de temperatura
     double coef_hum = 0.01;  // Coeficiente de humedad

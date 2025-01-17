@@ -10,10 +10,12 @@ int main()
 {
     int opcion;
     int num_dias = 0;
+    int alerta = 0;
+
     do
     {
         printf("Seleccione una opcion: \n");
-        printf("1. Crear archivo\n");
+        printf("1. Crear zona\n");
         printf("2. Ingresar datos de la zona\n");
         printf("3. Leer datos de la zona\n");
         printf("4. Encontrar zona por dia\n");
@@ -44,10 +46,10 @@ int main()
             {
                 printf("Dia %d:\nCO2 = %.2lf\nSO2 = %.2lf\nNO2 = %.2lf\nPM25 = %.2lf\nTemp = %.2lf\nHumedad = %.2lf\nVelocidad Aire = %.2lf\nAQI = %.2lf\n",
                        dias[i].numDia, dias[i].CO2, dias[i].SO2, dias[i].NO2, dias[i].PM25, dias[i].temperatura, dias[i].humedad, dias[i].velocidad_aire, dias[i].AQI);
-                mostrarContaminante(dias[i].AQI);
+                mostrarContaminante(dias[i].AQI, &alerta);
                 printf("\n");
             }
-
+            sugerencias(&alerta, nombreArchivo);
             break;
         case 4:
             printf("Ingrese el nombre del archivo: ");

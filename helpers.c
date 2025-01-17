@@ -10,7 +10,7 @@
 #define CO_LIMIT 4.0    // CO límite diario OMS (24 horas)
 
 
-void mostrarContaminante(double contaminante)
+void mostrarContaminante(double contaminante, int *alerta)
 {
     if (contaminante >= 0 && contaminante <= 50)
     {
@@ -23,31 +23,57 @@ void mostrarContaminante(double contaminante)
     else if (contaminante >= 101 && contaminante <= 150)
     {
         printf("Nivel del Indice de Calidad del Aire: NOCIVO PARA GRUPOS SENSIBLES\n");
+        *alerta = 1;
     }
     else if (contaminante >= 151 && contaminante <= 200)
     {
         printf("Nivel del Indice de Calidad del Aire: NOCIVO\n");
+        *alerta = 1;
     }
     else if (contaminante >= 201 && contaminante <= 300)
     {
         printf("Nivel del Indice de Calidad del Aire: MUY NOCIVO\n");
+        *alerta = 1;
     }
     else if (contaminante >= 301 && contaminante <= 400)
     {
         printf("Nivel del Indice de Calidad del Aire: PELIGROSO\n");
+        *alerta = 1;
     }
     else if (contaminante >= 401 && contaminante <= 500)
     {
         printf("Nivel del Indice de Calidad del Aire: PELIGROSO\n");
+        *alerta = 1;
     }
     else
     {
         printf("Nivel del Indice de Calidad del Aire: PELIGROSO\n");
+        *alerta = 1;
     }
 }
 
-void sugerencias(int *alerta){
-    
+void sugerencias(int *alerta, char *nombreArchivo)
+{
+    FILE *archivo = fopen("sugerencias.txt", "w");
+    if (archivo == NULL)
+    {
+        printf("Error al crear el archivo de sugerencias\n");
+        return;
+    }
+
+    if (*alerta)
+    {
+        fprintf(archivo, "Medidas de mitigación sugeridas para el archivo %s:\n", nombreArchivo);
+        fprintf(archivo, "- Reducción del tráfico vehicular\n");
+        fprintf(archivo, "- Cierre temporal de industrias\n");
+        fprintf(archivo, "- Suspensión de actividades al aire libre\n");
+    }
+    else
+    {
+        fprintf(archivo, "Los niveles de contaminación en el archivo %s están dentro de los límites recomendados.\n", nombreArchivo);
+    }
+
+    fclose(archivo);
 }
 
 double calcularAQI(double PM25, double NO2, double SO2, double CO,double temperatura, double humedad, double velocidad_aire)

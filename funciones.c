@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include "funciones.h"
 #include <string.h>
 #include "helpers.h"
-
+#include "funciones.h"
 
 double CO2[MAX_DIAS];
 double SO2[MAX_DIAS];

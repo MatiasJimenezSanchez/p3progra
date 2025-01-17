@@ -1,6 +1,8 @@
 #include <stdio.h>
-#include "funciones.h"
 #include <string.h>
+#include "helpers.h"
+
+
 // Límites máximos recomendados por la OMS (µg/m³ o mg/m³) - Directrices más estrictas
 #define PM25_LIMIT 15.0 // PM2.5 límite diario OMS (24 horas)
 #define NO2_LIMIT 25.0  // NO2 límite diario OMS (24 horas)
@@ -44,6 +46,10 @@ void mostrarContaminante(double contaminante)
     }
 }
 
+void sugerencias(int *alerta){
+    
+}
+
 double calcularAQI(double PM25, double NO2, double SO2, double CO,double temperatura, double humedad, double velocidad_aire)
 {
     double coef_temp = 0.02; // Coeficiente de temperatura
@@ -64,6 +70,5 @@ double calcularAQI(double PM25, double NO2, double SO2, double CO,double tempera
     if (aqi_base > 500)
         aqi_base = 500;
 
-    printf("AQI calculado: %.2f\n", aqi_base);
     return aqi_base;
 }

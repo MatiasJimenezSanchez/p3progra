@@ -1,5 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "funciones.h"
+#include "helpers.h" // Incluir helpers.h
+
 struct Dia dias[MAX_DIAS]; // Define un tamaño máximo para el array
 
 int main()
@@ -35,11 +39,15 @@ int main()
             printf("Ingrese el nombre del archivo: ");
             leercadena(nombreArchivo, 100);
             leerDatosZona(nombreArchivo, &num_dias, dias);
+            printf("\n");
             for (int i = 0; i < num_dias; i++)
             {
-                printf("Dia %d: CO2=%.2lf, SO2=%.2lf, NO2=%.2lf, PM25=%.2lf, Temp=%.2lf, Humedad=%.2lf, Velocidad Aire=%.2lf, AQI=%.2lf\n",
+                printf("Dia %d:\nCO2 = %.2lf\nSO2 = %.2lf\nNO2 = %.2lf\nPM25 = %.2lf\nTemp = %.2lf\nHumedad = %.2lf\nVelocidad Aire = %.2lf\nAQI = %.2lf\n",
                        dias[i].numDia, dias[i].CO2, dias[i].SO2, dias[i].NO2, dias[i].PM25, dias[i].temperatura, dias[i].humedad, dias[i].velocidad_aire, dias[i].AQI);
+                mostrarContaminante(dias[i].AQI);
+                printf("\n");
             }
+
             break;
         case 4:
             printf("Ingrese el nombre del archivo: ");

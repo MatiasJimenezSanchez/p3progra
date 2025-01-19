@@ -2,69 +2,61 @@
 #include <stdlib.h>
 #include <string.h>
 #include "funciones.h"
-#include "helpers.h" // Incluir helpers.h
+#include "helpers.h"
 
-struct Dia dias[MAX_DIAS]; // Define un tamaño máximo para el array
-
-int main()
-{
+int main() {
     int opcion;
     int num_dias = 0;
-    int alerta = 0;
 
-    do
-    {
-        printf("Seleccione una opcion: \n");
+    do {
+        printf("\nSeleccione una opcion: \n");
         printf("1. Crear zona\n");
         printf("2. Ingresar datos de la zona\n");
         printf("3. Leer datos de la zona\n");
-        printf("4. Encontrar zona por dia\n");
-        printf("5. Leer Datos historicos\n");
-        printf("6. Salir\n");
+        printf("4. Calcular promedio y generar reporte\n");
+        printf("5. Salir\n");
+        printf("Opcion: ");
         scanf("%d", &opcion);
 
         char nombreArchivo[100];
 
-        switch (opcion)
-        {
+        switch (opcion) {
         case 1:
-            printf("Ingrese el nombre del archivo a crear: ");
+            printf("Ingrese el nombre de la nueva zona: ");
             leercadena(nombreArchivo, 100);
             crearArchivo(nombreArchivo, &num_dias);
             break;
         case 2:
-            printf("Ingrese el nombre del archivo: ");
+            printf("Ingrese el nombre de la zona: ");
             leercadena(nombreArchivo, 100);
             addDia(nombreArchivo, &num_dias);
             break;
         case 3:
-            printf("Ingrese el nombre del archivo: ");
+            printf("Ingrese el nombre de la zona: ");
             leercadena(nombreArchivo, 100);
+            Dia dias[MAX_DIAS];
             leerDatosZona(nombreArchivo, &num_dias, dias);
-            printf("\n");
-            for (int i = 0; i < num_dias; i++)
-            {
-                printf("Dia %d:\nCO2 = %.2lf\nSO2 = %.2lf\nNO2 = %.2lf\nPM25 = %.2lf\nTemp = %.2lf\nHumedad = %.2lf\nVelocidad Aire = %.2lf\nAQI = %.2lf\n",
-                       dias[i].numDia, dias[i].CO2, dias[i].SO2, dias[i].NO2, dias[i].PM25, dias[i].temperatura, dias[i].humedad, dias[i].velocidad_aire, dias[i].AQI);
-                mostrarContaminante(dias[i].AQI, &alerta);
-                printf("\n");
+            for (int i = 0; i < num_dias; i++) {
+                printf("\nDía %d:\nCO2: %.2lf ppm\nSO2: %.2lf ppm\nNO2: %.2lf ppm\nPM2.5: %.2lf µg/m³\n",
+                       dias[i].numDia, dias[i].CO2, dias[i].SO2, dias[i].NO2, dias[i].PM25);
+                mostrarContaminante(dias[i].AQI, &(int){0});
             }
-            sugerencias(&alerta, nombreArchivo);
             break;
-        case 4:
-            printf("Ingrese el nombre del archivo: ");
-            // leercadena(nombreArchivo, 100);
-            // leerDatosZona(nombreArchivo);
-            // agregarFechasHistoricas(nombreArchivo);
+       case 4:
+            printf("Ingrese el nombre de la zona: ");
+            leercadena(nombreArchivo, 100);
+            strcat(nombreArchivo, ".txt"); // Agrega la extensión
+            Dia promedioHistorico = calcularPromedioZonaHistorico(nombreArchivo);
+
             break;
+
         case 5:
-            printf("Saliendo del programa\n");
+            printf("Saliendo del programa...\n");
             return 0;
-            break;
         default:
-            printf("Opcion no valida\n");
-            break;
+            printf("Opción no válida. Intente de nuevo.\n");
         }
-    } while (opcion != 6);
+    } while (1);
+
     return 0;
 }

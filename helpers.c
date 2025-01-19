@@ -1,15 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "helpers.h"
-
-
-// Límites máximos recomendados por la OMS (µg/m³ o mg/m³) - Directrices más estrictas
-#define PM25_LIMIT 15.0 // PM2.5 límite diario OMS (24 horas)
-#define NO2_LIMIT 25.0  // NO2 límite diario OMS (24 horas)
-#define SO2_LIMIT 40.0  // SO2 límite diario OMS (24 horas)
-#define CO_LIMIT 4.0    // CO límite diario OMS (24 horas)
-
-
+#include "funciones.h"
 void mostrarContaminante(double contaminante, int *alerta)
 {
     if (contaminante >= 0 && contaminante <= 50)
@@ -96,5 +88,44 @@ double calcularAQI(double PM25, double NO2, double SO2, double CO,double tempera
     if (aqi_base > 500)
         aqi_base = 500;
 
-    return aqi_base;
+    return (aqi > 500) ? 500 : aqi;
+}
+
+void verificarLimites(Dia promedio) {
+    // CO2
+    if (promedio.CO2 > CO_LIMIT) {
+        printf("\nCO2: %.2f ⚠️ EXCEDE el límite permitido (%.2f)", promedio.CO2, CO_LIMIT);
+    } else {
+        printf("\nCO2: %.2f (Dentro del límite permitido: %.2f)", promedio.CO2, CO_LIMIT);
+    }
+    
+    // SO2
+    if (promedio.SO2 > SO2_LIMIT) {
+        printf("\nSO2: %.2f ⚠️ EXCEDE el límite permitido (%.2f)", promedio.SO2, SO2_LIMIT);
+    } else {
+        printf("\nSO2: %.2f (Dentro del límite permitido: %.2f)", promedio.SO2, SO2_LIMIT);
+    }
+    
+    // NO2
+    if (promedio.NO2 > NO2_LIMIT) {
+        printf("\nNO2: %.2f ⚠️ EXCEDE el límite permitido (%.2f)", promedio.NO2, NO2_LIMIT);
+    } else {
+        printf("\nNO2: %.2f (Dentro del límite permitido: %.2f)", promedio.NO2, NO2_LIMIT);
+    }
+    
+    // PM2.5
+    if (promedio.PM25 > PM25_LIMIT) {
+        printf("\nPM2.5: %.2f ⚠️ EXCEDE el límite permitido (%.2f)", promedio.PM25, PM25_LIMIT);
+    } else {
+        printf("\nPM2.5: %.2f (Dentro del límite permitido: %.2f)", promedio.PM25, PM25_LIMIT);
+    }
+    
+    printf("\nAQI: %.2f", promedio.AQI);
+    
+    // Summary warning if any limit is exceeded
+    if (promedio.CO2 > CO_LIMIT || promedio.SO2 > SO2_LIMIT || 
+        promedio.NO2 > NO2_LIMIT || promedio.PM25 > PM25_LIMIT) {
+        printf("\n\n⚠️ ADVERTENCIA: Se han detectado niveles de contaminación por encima de los límites permitidos.");
+        printf("\nSe recomienda tomar medidas preventivas.\n");
+    }
 }

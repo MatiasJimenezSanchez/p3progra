@@ -1,0 +1,11 @@
+Reporte de Contaminación - Zona Quito Norte
+
+Promedios de los últimos 30 días:
+CO2: 0.00 ppm
+SO2: 0.00 ppm
+NO2: 0.00 ppm
+PM2.5: 0.00 µg/m³
+AQI: 0.00
+
+Recomendaciones:
+- Los niveles están dentro de los límites recomendados.

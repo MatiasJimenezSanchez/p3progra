@@ -1,59 +1,6 @@
 #include <stdio.h>
-#include <string.h>
 #include "helpers.h"
 #include "funciones.h"
-
-
-void mostrarContaminante(double contaminante, int *alerta)
-{
-    if (contaminante >= 0 && contaminante <= 50)
-    {
-        printf("Nivel del Indice de Calidad del Aire: BUENO\n");
-    }
-    else if (contaminante >= 51 && contaminante <= 100)
-    {
-        printf("Nivel del Indice de Calidad del Aire: MODERADO\n");
-    }
-    else if (contaminante >= 101 && contaminante <= 150)
-    {
-        printf("Nivel del Indice de Calidad del Aire: NOCIVO PARA GRUPOS SENSIBLES\n");
-        *alerta = 1;
-    }
-    else if (contaminante >= 151 && contaminante <= 200)
-    {
-        printf("Nivel del Indice de Calidad del Aire: NOCIVO\n");
-        *alerta = 1;
-    }
-    else if (contaminante >= 201 && contaminante <= 300)
-    {
-        printf("Nivel del Indice de Calidad del Aire: MUY NOCIVO\n");
-        *alerta = 1;
-    }
-    else if (contaminante >= 301 && contaminante <= 400)
-    {
-        printf("Nivel del Indice de Calidad del Aire: PELIGROSO\n");
-        *alerta = 1;
-    }
-    else if (contaminante >= 401 && contaminante <= 500)
-    {
-        printf("Nivel del Indice de Calidad del Aire: PELIGROSO\n");
-        *alerta = 1;
-    }
-    else
-    {
-        printf("Nivel del Indice de Calidad del Aire: PELIGROSO\n");
-        *alerta = 1;
-    }
-}
-
-
-void sugerencias(Dia promedio)
-{
-    if (promedio.CO2 > CO_LIMIT || promedio.SO2 > SO2_LIMIT || promedio.NO2 > NO2_LIMIT || promedio.PM25 > PM25_LIMIT)
-    {
-        printf("Se recomienda reducir el tráfico vehicular, cerrar temporalmente industrias y suspender actividades al aire libre.\n");
-    }
-}
 
 double calcularAQI(double PM25, double NO2, double SO2, double CO, double temperatura, double humedad, double velocidad_aire)
 {
@@ -77,6 +24,7 @@ double calcularAQI(double PM25, double NO2, double SO2, double CO, double temper
 
     return aqi;
 }
+
 void verificarLimites(Dia promedio) {
     printf("\nEstado de la contaminacion:");
     
@@ -102,5 +50,13 @@ void verificarLimites(Dia promedio) {
         printf("\nPM2.5: %.2f ⚠️ EXCEDE el limite permitido (%.2f)", promedio.PM25, PM25_LIMIT);
     } else {
         printf("\nPM2.5: %.2f ✅ Dentro del limite permitido (%.2f)", promedio.PM25, PM25_LIMIT);
+    }
+}
+
+void sugerencias(Dia promedio)
+{
+    if (promedio.CO2 > CO_LIMIT || promedio.SO2 > SO2_LIMIT || promedio.NO2 > NO2_LIMIT || promedio.PM25 > PM25_LIMIT)
+    {
+        printf("Se recomienda reducir el trafico vehicular, cerrar temporalmente industrias y suspender actividades al aire libre.\n");
     }
 }

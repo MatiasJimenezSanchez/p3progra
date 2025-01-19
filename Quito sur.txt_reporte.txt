@@ -1,6 +1,6 @@
-Reporte de Contaminación - Zona Quito sur.txt
+Reporte de Contaminacion - Zona Quito Sur.txt
 
-Promedios de los últimos 30 días:
+Promedios de los ultimos 30 dias:
 CO2: 4.39 ppm
 SO2: 5.23 ppm
 NO2: 32.17 ppm
@@ -8,4 +8,4 @@ PM2.5: 5.72 µg/m³
 AQI: 0.00
 
 Recomendaciones:
-- Fomentar el uso de transporte público.
+- Fomentar el uso de transporte publico.

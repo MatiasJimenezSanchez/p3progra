@@ -25,7 +25,7 @@ void crearArchivo(char *nombre, int *num_dias)
     fprintf(archivo, "%d\n", *num_dias); // Escribir num_dias en el archivo
     fclose(archivo);
 
-    // Registrar zona en índice
+    // Registrar zona en indice
     FILE *indice = fopen("zonas_indice.txt", "a");
     if (indice == NULL)
     {
@@ -59,7 +59,7 @@ Dia promedioPonderadoContaminacionZona(Dia dias[], int num_dias)
 
     for (int i = 0; i < num_dias; i++)
     {
-        double peso = (double)(num_dias - i) / num_dias; // Peso mayor para días recientes
+        double peso = (double)(num_dias - i) / num_dias; // Peso mayor para dias recientes
         totalPeso += peso;
         res.CO2 += dias[i].CO2 * peso;
         res.SO2 += dias[i].SO2 * peso;
@@ -77,6 +77,8 @@ Dia promedioPonderadoContaminacionZona(Dia dias[], int num_dias)
     res.temperatura /= totalPeso;
     res.humedad /= totalPeso;
     res.velocidad_aire /= totalPeso;
+
+    res.AQI = calcularAQI(res.PM25, res.NO2, res.SO2, res.CO2, res.temperatura, res.humedad, res.velocidad_aire);
 
     return res;
 }
@@ -150,6 +152,7 @@ void leerDatosZona(char *nombre, int *num_dias, Dia dias[])
 
     fclose(archivo);
 
+    // Imprimir datos en consola
     printf("\nDatos de la zona '%s':\n", nombre);
     for (int i = 0; i < *num_dias; i++)
     {
@@ -169,19 +172,19 @@ void exportarReporte(char *nombreArchivo, Dia promedio)
         return;
     }
 
-    fprintf(reporte, "Reporte de Contaminación - Zona %s\n\n", nombreArchivo);
-    fprintf(reporte, "Promedios de los últimos 30 días:\n");
+    fprintf(reporte, "Reporte de Contaminacion - Zona %s\n\n", nombreArchivo);
+    fprintf(reporte, "Promedios de los ultimos 30 dias:\n");
     fprintf(reporte, "CO2: %.2f ppm\nSO2: %.2f ppm\nNO2: %.2f ppm\nPM2.5: %.2f µg/m³\nAQI: %.2f\n\n",
             promedio.CO2, promedio.SO2, promedio.NO2, promedio.PM25, promedio.AQI);
 
     fprintf(reporte, "Recomendaciones:\n");
-    if (promedio.CO2 > CO_LIMIT) fprintf(reporte, "- Reducir el tráfico vehicular.\n");
+    if (promedio.CO2 > CO_LIMIT) fprintf(reporte, "- Reducir el trafico vehicular.\n");
     if (promedio.SO2 > SO2_LIMIT) fprintf(reporte, "- Cerrar temporalmente industrias.\n");
-    if (promedio.NO2 > NO2_LIMIT) fprintf(reporte, "- Fomentar el uso de transporte público.\n");
+    if (promedio.NO2 > NO2_LIMIT) fprintf(reporte, "- Fomentar el uso de transporte publico.\n");
     if (promedio.PM25 > PM25_LIMIT) fprintf(reporte, "- Suspender actividades al aire libre.\n");
     if (promedio.CO2 <= CO_LIMIT && promedio.SO2 <= SO2_LIMIT &&  
         promedio.NO2 <= NO2_LIMIT && promedio.PM25 <= PM25_LIMIT) {
-        fprintf(reporte, "- Los niveles están dentro de los límites recomendados.\n");
+        fprintf(reporte, "- Los niveles estan dentro de los limites recomendados.\n");
     }
 
     fclose(reporte);

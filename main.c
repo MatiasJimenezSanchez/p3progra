@@ -1,62 +1,77 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "funciones.h"
 #include "helpers.h"
 
-int main() {
+int main()
+{
     int opcion;
-    int num_dias = 0;
+    char nombreArchivo[100];
+    int num_dias;
+    Dia dias[MAX_DIAS];
 
-    do {
-        printf("\nSeleccione una opcion: \n");
-        printf("1. Crear zona\n");
-        printf("2. Ingresar datos de la zona\n");
-        printf("3. Leer datos de la zona\n");
-        printf("4. Calcular promedio y generar reporte\n");
+    do
+    {
+        printf("\n--- MENU PRINCIPAL ---\n");
+        printf("1. Crear archivo\n");
+        printf("2. Ingresar datos\n");
+        printf("3. Leer datos de zona\n");
+        printf("4. Calcular promedios historicos y generar reporte\n");
         printf("5. Salir\n");
-        printf("Opcion: ");
+        printf("----------------------\n");
+        printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
 
-        char nombreArchivo[100];
-
-        switch (opcion) {
+        switch (opcion)
+        {
         case 1:
-            printf("Ingrese el nombre de la nueva zona: ");
+            printf("Ingrese el nombre del archivo: ");
             leercadena(nombreArchivo, 100);
             crearArchivo(nombreArchivo, &num_dias);
             break;
-        case 2:
-            printf("Ingrese el nombre de la zona: ");
-            leercadena(nombreArchivo, 100);
-            addDia(nombreArchivo, &num_dias);
-            break;
-        case 3:
-            printf("Ingrese el nombre de la zona: ");
-            leercadena(nombreArchivo, 100);
-            Dia dias[MAX_DIAS];
-            leerDatosZona(nombreArchivo, &num_dias, dias);
-            for (int i = 0; i < num_dias; i++) {
-                printf("\nDía %d:\nCO2: %.2lf ppm\nSO2: %.2lf ppm\nNO2: %.2lf ppm\nPM2.5: %.2lf µg/m³\n",
-                       dias[i].numDia, dias[i].CO2, dias[i].SO2, dias[i].NO2, dias[i].PM25);
-                mostrarContaminante(dias[i].AQI, &(int){0});
-            }
-            break;
-       case 4:
-            printf("Ingrese el nombre de la zona: ");
-            leercadena(nombreArchivo, 100);
-            strcat(nombreArchivo, ".txt"); // Agrega la extensión
-            Dia promedioHistorico = calcularPromedioZonaHistorico(nombreArchivo);
 
+        case 2:
+            printf("Ingrese el nombre del archivo: ");
+            leercadena(nombreArchivo, 100);
+            Dia nuevoDia;
+            addDia(nombreArchivo, &num_dias, nuevoDia);
+            break;
+
+        case 3:
+            printf("Ingrese el nombre del archivo: ");
+            leercadena(nombreArchivo, 100);
+            leerDatosZona(nombreArchivo, &num_dias, dias);
+            printf("Datos leidos correctamente.\n");
+            break;
+
+        case 4:
+            printf("Ingrese el nombre del archivo: ");
+            leercadena(nombreArchivo, 100);
+            leerDatosZona(nombreArchivo, &num_dias, dias);
+
+            if (num_dias < 30)
+            {
+                printf("No hay suficientes datos para calcular promedios historicos (se requieren al menos 30 dias).\n");
+                break;
+            }
+
+            Dia promedio = promedioPonderadoContaminacionZona(dias, 30); // Ultimos 30 dias
+            printf("\nPromedios de contaminacion calculados.\n");
+
+            printf("Generando reporte...\n");
+            exportarReporte(nombreArchivo, promedio);
+
+            printf("Reporte generado en '%s_reporte.txt'.\n", nombreArchivo);
             break;
 
         case 5:
             printf("Saliendo del programa...\n");
-            return 0;
+            break;
+
         default:
-            printf("Opción no válida. Intente de nuevo.\n");
+            printf("Opcion no valida. Por favor, intente de nuevo.\n");
+            break;
         }
-    } while (1);
+    } while (opcion != 5);
 
     return 0;
 }

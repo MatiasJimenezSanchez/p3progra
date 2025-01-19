@@ -17,8 +17,9 @@ typedef struct Dia {
 
 void crearArchivo(char *nombre, int *num_dias);
 void leercadena(char *cadena, int longitud);
-void addDia(char *nombre, int *num_dias);
+void addDia(char *nombre, int *num_dias, Dia nuevoDia);
+Dia promedioPonderadoContaminacionZona(Dia dias[], int num_dias);
 void leerDatosZona(char *nombre, int *num_dias, Dia dias[]);
 void exportarReporte(char *nombreArchivo, Dia promedio);
 
-#endif // FUNCIONES_H
+#endif

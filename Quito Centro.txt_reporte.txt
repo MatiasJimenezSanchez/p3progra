@@ -1,0 +1,11 @@
+Reporte de Contaminación - Zona Quito Centro.txt
+
+Promedios de los últimos 30 días:
+CO2: 4.39 ppm
+SO2: 5.23 ppm
+NO2: 32.17 ppm
+PM2.5: 5.72 µg/m³
+AQI: 0.00
+
+Recomendaciones:
+- Fomentar el uso de transporte público.

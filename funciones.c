@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include "helpers.h"
@@ -12,13 +11,14 @@ double temperatura[MAX_DIAS];
 double humedad[MAX_DIAS];
 double velocidad_aire[MAX_DIAS];
 
-
-void crearArchivo(char *nombre, int *num_dias) {
+void crearArchivo(char *nombre, int *num_dias)
+{
     *num_dias = 0; // Reiniciar num_dias a 0
     FILE *archivo;
     strcat(nombre, ".txt");
     archivo = fopen(nombre, "w");
-    if (archivo == NULL) {
+    if (archivo == NULL)
+    {
         printf("Error al crear el archivo %s\n", nombre);
         return;
     }
@@ -27,8 +27,9 @@ void crearArchivo(char *nombre, int *num_dias) {
 
     // Registrar zona en índice
     FILE *indice = fopen("zonas_indice.txt", "a");
-    if (indice == NULL) {
-        printf("Error al abrir el archivo índice.\n");
+    if (indice == NULL)
+    {
+        printf("Error al abrir el archivo indice.\n");
         return;
     }
     fprintf(indice, "%s\n", nombre);
@@ -43,25 +44,49 @@ void leercadena(char *cadena, int longitud)
     cadena[len] = '\0';
 }
 
-void addDia(char *nombre, int *num_dias)
+Dia promedioPonderadoContaminacionZona(Dia dias[], int num_dias)
 {
-    struct Dia dia;
-    FILE *archivo;
-    strcat(nombre, ".txt");
-    archivo = fopen(nombre, "r+");
-    if (archivo == NULL)
-    {
-        printf("Error al abrir el archivo\n");
-        return;
-    }
-    fscanf(archivo, "%d", num_dias); // Leer num_dias del archivo
-    *num_dias = *num_dias + 1;
-    fseek(archivo, 0, SEEK_SET);
-    fprintf(archivo, "%d\n", *num_dias); // Actualizar num_dias en el archivo
-    fseek(archivo, 0, SEEK_END);
+    Dia res = {0};
+    double totalPeso = 0.0;
 
-    dia.numDia = *num_dias;
-    printf("Ingrese el nivel de CO: ");
+    if (num_dias <= 0) {
+        return res;
+    }
+
+    if (num_dias > 30) {
+        num_dias = 30;
+    }
+
+    for (int i = 0; i < num_dias; i++)
+    {
+        double peso = (double)(num_dias - i) / num_dias; // Peso mayor para días recientes
+        totalPeso += peso;
+        res.CO2 += dias[i].CO2 * peso;
+        res.SO2 += dias[i].SO2 * peso;
+        res.NO2 += dias[i].NO2 * peso;
+        res.PM25 += dias[i].PM25 * peso;
+        res.temperatura += dias[i].temperatura * peso;
+        res.humedad += dias[i].humedad * peso;
+        res.velocidad_aire += dias[i].velocidad_aire * peso;
+    }
+
+    res.CO2 /= totalPeso;
+    res.SO2 /= totalPeso;
+    res.NO2 /= totalPeso;
+    res.PM25 /= totalPeso;
+    res.temperatura /= totalPeso;
+    res.humedad /= totalPeso;
+    res.velocidad_aire /= totalPeso;
+
+    return res;
+}
+
+void addDia(char *nombre, int *num_dias, Dia nuevoDia)
+{
+    Dia dia = nuevoDia;
+
+    // Solicitar datos del nuevo dia
+    printf("Ingrese el nivel de CO2: ");
     scanf("%lf", &dia.CO2);
 
     printf("Ingrese el nivel de SO2: ");
@@ -82,7 +107,21 @@ void addDia(char *nombre, int *num_dias)
     printf("Ingrese la velocidad del aire: ");
     scanf("%lf", &dia.velocidad_aire);
 
-     dia.numDia = *num_dias;
+    FILE *archivo;
+    strcat(nombre, ".txt");
+    archivo = fopen(nombre, "r+");
+    if (archivo == NULL)
+    {
+        printf("Error al abrir el archivo\n");
+        return;
+    }
+    fscanf(archivo, "%d", num_dias); // Leer num_dias del archivo
+    *num_dias = *num_dias + 1;
+    fseek(archivo, 0, SEEK_SET);
+    fprintf(archivo, "%d\n", *num_dias); // Actualizar num_dias en el archivo
+    fseek(archivo, 0, SEEK_END);
+
+    dia.numDia = *num_dias;
     dia.AQI = calcularAQI(dia.PM25, dia.NO2, dia.SO2, dia.CO2, dia.temperatura, dia.humedad, dia.velocidad_aire);
     fprintf(archivo, "%d %.2lf %.2lf %.2lf %.2lf %.2lf %.2lf %.2lf\n", dia.numDia, dia.CO2, dia.SO2, dia.NO2, dia.PM25, dia.temperatura, dia.humedad, dia.velocidad_aire);
     fclose(archivo);
@@ -110,55 +149,21 @@ void leerDatosZona(char *nombre, int *num_dias, Dia dias[])
     }
 
     fclose(archivo);
+
+    printf("\nDatos de la zona '%s':\n", nombre);
+    for (int i = 0; i < *num_dias; i++)
+    {
+        printf("Dia %d: CO2: %.2f ppm, SO2: %.2f ppm, NO2: %.2f ppm, PM2.5: %.2f µg/m³, Temperatura: %.2f °C, Humedad: %.2f %%, Velocidad del aire: %.2f m/s, AQI: %.2f\n",
+               dias[i].numDia, dias[i].CO2, dias[i].SO2, dias[i].NO2, dias[i].PM25, dias[i].temperatura, dias[i].humedad, dias[i].velocidad_aire, dias[i].AQI);
+    }
 }
 
-Dia calcularPromedioZonaHistorico(char *nombreArchivo) {
-    Dia promedio = {0};
-    FILE *archivo;
-
-    archivo = fopen(nombreArchivo, "r");
-    if (archivo == NULL) {
-        printf("Error: No se pudo abrir el archivo '%s'. Verifique que el archivo exista y tenga el nombre correcto.\n", nombreArchivo);
-        return promedio;
-    }
-
-    int num_dias;
-    fscanf(archivo, "%d", &num_dias);
-
-    Dia dia;
-    for (int i = 0; i < num_dias; i++) {
-        fscanf(archivo, "%d %lf %lf %lf %lf %lf %lf %lf",
-               &dia.numDia, &dia.CO2, &dia.SO2, &dia.NO2,
-               &dia.PM25, &dia.temperatura, &dia.humedad, &dia.velocidad_aire);
-        dia.AQI = calcularAQI(dia.PM25, dia.NO2, dia.SO2, dia.CO2,
-                              dia.temperatura, dia.humedad, dia.velocidad_aire);
-
-        // Sumar valores para el promedio
-        promedio.CO2 += dia.CO2;
-        promedio.SO2 += dia.SO2;
-        promedio.NO2 += dia.NO2;
-        promedio.PM25 += dia.PM25;
-        promedio.AQI += dia.AQI;
-    }
-
-    if (num_dias > 0) {
-        promedio.CO2 /= num_dias;
-        promedio.SO2 /= num_dias;
-        promedio.NO2 /= num_dias;
-        promedio.PM25 /= num_dias;
-        promedio.AQI /= num_dias;
-    }
-
-    fclose(archivo);
-    return promedio;
-}
-
-void exportarReporte(char *nombreArchivo, Dia promedio) {
-    FILE *reporte;
+void exportarReporte(char *nombreArchivo, Dia promedio)
+{
     char reporteNombre[100];
     snprintf(reporteNombre, sizeof(reporteNombre), "%s_reporte.txt", nombreArchivo);
 
-    reporte = fopen(reporteNombre, "w");
+    FILE *reporte = fopen(reporteNombre, "w");
     if (reporte == NULL) {
         printf("Error al crear el archivo de reporte para %s.\n", nombreArchivo);
         return;
@@ -180,5 +185,4 @@ void exportarReporte(char *nombreArchivo, Dia promedio) {
     }
 
     fclose(reporte);
-    printf("Reporte generado: %s\n", reporteNombre);
 }

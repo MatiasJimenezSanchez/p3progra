@@ -9,8 +9,9 @@
 #define PM25_LIMIT 40.0
 
 void verificarLimites(Dia promedio);
-void sugerencias(Dia promedio); // Asegúrate de que esta declaración esté presente
+void sugerencias(Dia promedio);
 double calcularAQI(double PM25, double NO2, double SO2, double CO, double temperatura, double humedad, double velocidad_aire);
+void mostrarContaminante(double contaminante, int *alerta, FILE *reporte);
 
 #endif
 

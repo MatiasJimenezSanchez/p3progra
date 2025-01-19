@@ -1,11 +1,18 @@
 Reporte de Contaminacion - Zona Quito Norte.txt
 
 Promedios de los ultimos 30 dias:
-CO2: 4.39 ppm
+CO2: 5.05 ppm
 SO2: 5.23 ppm
 NO2: 32.17 ppm
-PM2.5: 5.72 µg/m³
-AQI: 69.46
+PM2.5: 2150545.00 µg/m³
+AQI: 500.00
+
+Analisis de cada nivel de contaminacion:
+CO2: 5.05 ppm - Nivel del Indice de Calidad del Aire: BUENO
+SO2: 5.23 ppm - Nivel del Indice de Calidad del Aire: BUENO
+NO2: 32.17 ppm - Nivel del Indice de Calidad del Aire: BUENO
+PM2.5: 2150545.00 µg/m³ - Nivel del Indice de Calidad del Aire: PELIGROSO
 
 Recomendaciones:
 - Fomentar el uso de transporte publico.
+- Suspender actividades al aire libre.

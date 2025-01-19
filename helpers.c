@@ -2,6 +2,48 @@
 #include "helpers.h"
 #include "funciones.h"
 
+void mostrarContaminante(double contaminante, int *alerta, FILE *reporte)
+{
+    if (contaminante >= 0 && contaminante <= 50)
+    {
+        fprintf(reporte, "Nivel del Indice de Calidad del Aire: BUENO\n");
+    }
+    else if (contaminante >= 51 && contaminante <= 100)
+    {
+        fprintf(reporte, "Nivel del Indice de Calidad del Aire: MODERADO\n");
+    }
+    else if (contaminante >= 101 && contaminante <= 150)
+    {
+        fprintf(reporte, "Nivel del Indice de Calidad del Aire: NOCIVO PARA GRUPOS SENSIBLES\n");
+        *alerta = 1;
+    }
+    else if (contaminante >= 151 && contaminante <= 200)
+    {
+        fprintf(reporte, "Nivel del Indice de Calidad del Aire: NOCIVO\n");
+        *alerta = 1;
+    }
+    else if (contaminante >= 201 && contaminante <= 300)
+    {
+        fprintf(reporte, "Nivel del Indice de Calidad del Aire: MUY NOCIVO\n");
+        *alerta = 1;
+    }
+    else if (contaminante >= 301 && contaminante <= 400)
+    {
+        fprintf(reporte, "Nivel del Indice de Calidad del Aire: PELIGROSO\n");
+        *alerta = 1;
+    }
+    else if (contaminante >= 401 && contaminante <= 500)
+    {
+        fprintf(reporte, "Nivel del Indice de Calidad del Aire: PELIGROSO\n");
+        *alerta = 1;
+    }
+    else
+    {
+        fprintf(reporte, "Nivel del Indice de Calidad del Aire: PELIGROSO\n");
+        *alerta = 1;
+    }
+}
+
 double calcularAQI(double PM25, double NO2, double SO2, double CO, double temperatura, double humedad, double velocidad_aire)
 {
     double coef_temp = 0.02; // Coeficiente de temperatura

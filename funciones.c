@@ -177,7 +177,18 @@ void exportarReporte(char *nombreArchivo, Dia promedio)
     fprintf(reporte, "CO2: %.2f ppm\nSO2: %.2f ppm\nNO2: %.2f ppm\nPM2.5: %.2f µg/m³\nAQI: %.2f\n\n",
             promedio.CO2, promedio.SO2, promedio.NO2, promedio.PM25, promedio.AQI);
 
-    fprintf(reporte, "Recomendaciones:\n");
+    fprintf(reporte, "Analisis de cada nivel de contaminacion:\n");
+    int alerta = 0;
+    fprintf(reporte, "CO2: %.2f ppm - ", promedio.CO2);
+    mostrarContaminante(promedio.CO2, &alerta, reporte);
+    fprintf(reporte, "SO2: %.2f ppm - ", promedio.SO2);
+    mostrarContaminante(promedio.SO2, &alerta, reporte);
+    fprintf(reporte, "NO2: %.2f ppm - ", promedio.NO2);
+    mostrarContaminante(promedio.NO2, &alerta, reporte);
+    fprintf(reporte, "PM2.5: %.2f µg/m³ - ", promedio.PM25);
+    mostrarContaminante(promedio.PM25, &alerta, reporte);
+
+    fprintf(reporte, "\nRecomendaciones:\n");
     if (promedio.CO2 > CO_LIMIT) fprintf(reporte, "- Reducir el trafico vehicular.\n");
     if (promedio.SO2 > SO2_LIMIT) fprintf(reporte, "- Cerrar temporalmente industrias.\n");
     if (promedio.NO2 > NO2_LIMIT) fprintf(reporte, "- Fomentar el uso de transporte publico.\n");

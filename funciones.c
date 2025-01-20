@@ -87,28 +87,81 @@ void addDia(char *nombre, int *num_dias, Dia nuevoDia)
 {
     Dia dia = nuevoDia;
 
-    // Solicitar datos del nuevo dia
-    printf("Ingrese el nivel de CO2: ");
-    scanf("%lf", &dia.CO2);
+    do
+    {
+        printf("Ingrese el nivel de CO2: ");
+        while (scanf("%lf", &dia.CO2) != 1)
+        {
+            printf("Error: Debe ingresar un numero entero positivo.\n");
+            while (getchar() != '\n')
+                ; // Limpiar el buffer de entrada
+        }
+    } while (dia.CO2 <= 0);
 
-    printf("Ingrese el nivel de SO2: ");
-    scanf("%lf", &dia.SO2);
+    do
+    {
+        printf("Ingrese el nivel de SO2: ");
+        while (scanf("%lf", &dia.SO2) != 1)
+        {
+            printf("Error: Debe ingresar un numero entero positivo.\n");
+            while (getchar() != '\n')
+                ; // Limpiar el buffer de entrada
+        }
+    } while (dia.SO2 <= 0);
 
-    printf("Ingrese el nivel de NO2: ");
-    scanf("%lf", &dia.NO2);
+    do
+    {
+        printf("Ingrese el nivel de NO2: ");
+        while (scanf("%lf", &dia.NO2) != 1)
+        {
+            printf("Error: Debe ingresar un numero entero positivo.\n");
+            while (getchar() != '\n')
+                ; // Limpiar el buffer de entrada
+        }
+    } while (dia.NO2<=0);
+    do
+    {
+        printf("Ingrese el nivel de PM25: ");
+        while (scanf("%lf", &dia.PM25) != 1)
+        {
+            printf("Error: Debe ingresar un numero entero positivo.\n");
+            while (getchar() != '\n')
+                ; // Limpiar el buffer de entrada
+        }
+    } while (dia.PM25 <= 0);
+    
+    do
+    {
+        printf("Ingrese la temperatura: ");
+        while (scanf("%lf", &dia.temperatura) != 1)
+        {
+            printf("Error: Debe ingresar un numero entero positivo.\n");
+            while (getchar() != '\n')
+                ; // Limpiar el buffer de entrada
+        }
+    } while (dia.temperatura<=0);
+    
+    do
+    {
+        printf("Ingrese la humedad: ");
+        while (scanf("%lf", &dia.humedad) != 1)
+        {
+            printf("Error: Debe ingresar un numero entero positivo.\n");
+            while (getchar() != '\n')
+                ; // Limpiar el buffer de entrada
+        }
+    } while (dia.humedad<=0);
 
-    printf("Ingrese el nivel de PM25: ");
-    scanf("%lf", &dia.PM25);
-
-    printf("Ingrese la temperatura: ");
-    scanf("%lf", &dia.temperatura);
-
-    printf("Ingrese la humedad: ");
-    scanf("%lf", &dia.humedad);
-
-    printf("Ingrese la velocidad del aire: ");
-    scanf("%lf", &dia.velocidad_aire);
-
+    do{
+        printf("Ingrese la velocidad del aire: ");
+        while (scanf("%lf", &dia.velocidad_aire) != 1)
+        {
+            printf("Error: Debe ingresar un numero entero positivo.\n");
+            while (getchar() != '\n')
+                ; // Limpiar el buffer de entrada
+        }
+    } while (dia.velocidad_aire<=0);
+    
     FILE *archivo;
     strcat(nombre, ".txt");
     archivo = fopen(nombre, "r+");
@@ -117,6 +170,7 @@ void addDia(char *nombre, int *num_dias, Dia nuevoDia)
         printf("Error al abrir el archivo\n");
         return;
     }
+    
     fscanf(archivo, "%d", num_dias); // Leer num_dias del archivo
     *num_dias = *num_dias + 1;
     fseek(archivo, 0, SEEK_SET);

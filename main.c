@@ -18,8 +18,16 @@ int main()
         printf("4. Calcular promedios historicos y generar reporte\n");
         printf("5. Salir\n");
         printf("----------------------\n");
-        printf("Seleccione una opcion: ");
-        scanf("%d", &opcion);
+        do
+        {
+            printf("Seleccione una opcion: ");
+            while (scanf("%d", &opcion) != 1)
+            {
+                printf("Error: Debe ingresar un numero entero positivo.\n");
+                while (getchar() != '\n')
+                    ; // Limpiar el buffer de entrada
+            }
+        } while (opcion <= 0);
 
         switch (opcion)
         {
